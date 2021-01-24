@@ -8,13 +8,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class EventsClass implements Listener {
@@ -37,6 +37,11 @@ public class EventsClass implements Listener {
     }
 
     @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        event.setDeathMessage(ChatColor.RED + event.getDeathMessage());
+    }
+
+    @EventHandler
     public void onMove(PlayerMoveEvent event) {
         try {
             Player player = event.getPlayer();
@@ -47,7 +52,7 @@ public class EventsClass implements Listener {
                             ChatColor.DARK_RED + "" + ChatColor.BOLD + " NETHER  " :
                             ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + " END     ");
 
-            player.setPlayerListName(world + ChatColor.RESET + " | " + ChatColor.BOLD + "" + ChatColor.RED + "♡ " + (int) Math.round((player.getHealth() / 2)) + ChatColor.RESET + ChatColor.WHITE + " " + player.getDisplayName() + " " + ChatColor.GRAY + "(" + ChatColor.RED + player.getStatistic(Statistic.DEATHS) + ChatColor.GRAY + ")");
+            player.setPlayerListName(world + ChatColor.RESET + " | " + ChatColor.WHITE + player.getDisplayName() + " " + ChatColor.GRAY + "(" + ChatColor.RED + player.getStatistic(Statistic.DEATHS) + ChatColor.GRAY + ")");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,6 +69,7 @@ public class EventsClass implements Listener {
                     for (Enchantment e : SurvivalPlus.custom_enchants) {
                         if(item0.getEnchantments().containsKey(Enchantment.getByKey(e.getKey())) && item1.getEnchantments().containsKey(Enchantment.getByKey(e.getKey()))) {
                             event.setCancelled(true);
+                            event.getView().setItem(2, new ItemStack(Material.AIR));
                         } else if(item0.getEnchantments().containsKey(Enchantment.getByKey(e.getKey())) || item1.getEnchantments().containsKey(Enchantment.getByKey(e.getKey()))) {
                             ItemMeta meta = item2.getItemMeta();
                             meta.setLore(null);
@@ -84,6 +90,7 @@ public class EventsClass implements Listener {
                         int level = 0;
                         if(item0.getEnchantments().containsKey(Enchantment.getByKey(e.getKey())) && item1.getEnchantments().containsKey(Enchantment.getByKey(e.getKey()))) {
                             event.setCancelled(true);
+                            event.getView().setItem(2, new ItemStack(Material.AIR));
                         } else if(item0.getEnchantments().containsKey(Enchantment.getByKey(e.getKey()))) {
                             level = Objects.requireNonNull(item0.getItemMeta()).getEnchantLevel(e);
                             item2.removeEnchantment(e);

@@ -7,6 +7,7 @@ import me.hawkeynl.survivalplus.Commands.EnderchestCommand;
 import me.hawkeynl.survivalplus.Commands.RepairCommand;
 import me.hawkeynl.survivalplus.Enchantments.*;
 import me.hawkeynl.survivalplus.Events.EventsClass;
+import me.hawkeynl.survivalplus.Events.NameTagsEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -64,6 +65,7 @@ public class SurvivalPlus extends JavaPlugin {
         getCommand("enderchest").setExecutor(new EnderchestCommand());
         getCommand("craft").setExecutor(new CraftCommand());
         getServer().getPluginManager().registerEvents(new EventsClass(), this);
+        getServer().getPluginManager().registerEvents(new NameTagsEvents(), this);
         getServer().getPluginManager().registerEvents(hasteEnchantment, this);
         getServer().getPluginManager().registerEvents(explosiveTouchEnchantment, this);
         getServer().getPluginManager().registerEvents(speedEnchantment, this);

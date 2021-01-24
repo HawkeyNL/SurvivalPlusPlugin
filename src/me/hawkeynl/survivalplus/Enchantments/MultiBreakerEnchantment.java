@@ -41,6 +41,8 @@ public class MultiBreakerEnchantment extends Enchantment implements Listener {
         blocksNotToBreak.add(Material.CHEST);
         blocksNotToBreak.add(Material.ENDER_CHEST);
         blocksNotToBreak.add(Material.TRAPPED_CHEST);
+        blocksNotToBreak.add(Material.SPAWNER);
+        blocksNotToBreak.add(Material.SHULKER_BOX);
     }
 
     @EventHandler
@@ -122,17 +124,19 @@ public class MultiBreakerEnchantment extends Enchantment implements Listener {
                     block.breakNaturally();
                     total++;
                 }
+
                 if (enchant == 1) {
                     byte data = block.getData();
                     Material drop = block.getType();
                     block.setType(Material.AIR);
-                    Objects.requireNonNull(mainBlock.getLocation().getWorld()).dropItemNaturally(mainBlock.getLocation(),
-                            new ItemStack(drop, 1, data));
+                    if (block.getType() != Material.AIR) {
+                        mainBlock.getLocation().getWorld().dropItemNaturally(mainBlock.getLocation(), new ItemStack(drop, 1, data));
+                    }
                     total++;
                 }
 
                 if(itemInHand.containsEnchantment(Enchantment.DURABILITY)) {
-                    itemInHand.setDurability((short)(itemInHand.getDurability() + (Math.random() < 0.5 ? (Math.random() < 0.7 ? 1 : 0) : 0)));
+                    itemInHand.setDurability((short)(itemInHand.getDurability() + (Math.random() < 0.5 ? (Math.random() < 0.55 ? 0 : 1) : 0)));
                 } else {
                     itemInHand.setDurability((short)(itemInHand.getDurability() + 1));
                 }
