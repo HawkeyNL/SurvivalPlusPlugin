@@ -54,7 +54,7 @@ public class EventsClass implements Listener {
                             ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + " END     ");
 
             if(player.getGameMode() == GameMode.CREATIVE) {
-                player.setPlayerListName(ChatColor.AQUA + player.getGameMode().toString() + ChatColor.WHITE + " " + player.getDisplayName());
+                player.setPlayerListName(" " + ChatColor.AQUA + player.getGameMode().toString() + ChatColor.WHITE + " " + player.getDisplayName());
             } else {
                 player.setPlayerListName(world + ChatColor.RESET + " | " + ChatColor.WHITE + player.getDisplayName() + " " + ChatColor.GRAY + "(" + ChatColor.RED + player.getStatistic(Statistic.DEATHS) + ChatColor.GRAY + ")");
             }
