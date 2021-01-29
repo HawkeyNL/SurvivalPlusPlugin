@@ -1,10 +1,6 @@
 package me.hawkeynl.survivalplus;
 
-import com.mojang.datafixers.kinds.IdF;
-import me.hawkeynl.survivalplus.Commands.CraftCommand;
-import me.hawkeynl.survivalplus.Commands.EnchantsCommand;
-import me.hawkeynl.survivalplus.Commands.EnderchestCommand;
-import me.hawkeynl.survivalplus.Commands.RepairCommand;
+import me.hawkeynl.survivalplus.Commands.*;
 import me.hawkeynl.survivalplus.Enchantments.*;
 import me.hawkeynl.survivalplus.Events.EventsClass;
 import me.hawkeynl.survivalplus.Events.NameTagsEvents;
@@ -12,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_16_R3.help.CommandAliasHelpTopic;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SurvivalPlus extends JavaPlugin {
-    public static final String PREFIX = ChatColor.BOLD + "" + ChatColor.YELLOW + "[SurvivalPlus] " + ChatColor.RESET;
+    public static final String PREFIX = ChatColor.AQUA + "[SurvivalPlus] " + ChatColor.RESET;
     public static SurvivalPlus PLUGIN;
 
     Map<String, String> currentTpaRequests = new HashMap<>();
@@ -71,6 +66,10 @@ public class SurvivalPlus extends JavaPlugin {
         getCommand("repair").setExecutor(new RepairCommand());
         getCommand("enderchest").setExecutor(new EnderchestCommand());
         getCommand("craft").setExecutor(new CraftCommand());
+        getCommand("home").setExecutor(new HomeCommand());
+        getCommand("sethome").setExecutor(new SetHomeCommand());
+        getCommand("delhome").setExecutor(new DelHomeCommand());
+
         getServer().getPluginManager().registerEvents(new EventsClass(), this);
         getServer().getPluginManager().registerEvents(new NameTagsEvents(), this);
         getServer().getPluginManager().registerEvents(hasteEnchantment, this);
@@ -83,6 +82,8 @@ public class SurvivalPlus extends JavaPlugin {
         getServer().getPluginManager().registerEvents(nightVisionEnchantment, this);
         getServer().getPluginManager().registerEvents(teleportationEnchantment, this);
         getServer().getPluginManager().registerEvents(multiBreakerEnchantment, this);
+
+        loadConfig();
     }
 
     @Override
@@ -233,5 +234,10 @@ public class SurvivalPlus extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadConfig(){
+        getConfig().options().copyDefaults(true);
+        saveConfig();
     }
 }
