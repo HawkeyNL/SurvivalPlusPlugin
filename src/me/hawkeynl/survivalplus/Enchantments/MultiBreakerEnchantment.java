@@ -43,6 +43,8 @@ public class MultiBreakerEnchantment extends Enchantment implements Listener {
         blocksNotToBreak.add(Material.TRAPPED_CHEST);
         blocksNotToBreak.add(Material.SPAWNER);
         blocksNotToBreak.add(Material.SHULKER_BOX);
+        blocksNotToBreak.add(Material.BEDROCK);
+        blocksNotToBreak.add(Material.OBSIDIAN);
     }
 
     @EventHandler

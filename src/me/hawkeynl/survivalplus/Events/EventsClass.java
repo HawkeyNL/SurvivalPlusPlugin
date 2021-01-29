@@ -2,6 +2,7 @@ package me.hawkeynl.survivalplus.Events;
 
 import me.hawkeynl.survivalplus.SurvivalPlus;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.enchantments.Enchantment;

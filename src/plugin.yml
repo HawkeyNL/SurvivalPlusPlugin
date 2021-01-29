@@ -11,3 +11,11 @@ commands:
     aliases:
       - echest
   craft:
+  tpa:
+  tpaccept:
+    aliases:
+      - tpac
+      - accept
+  tpdeny:
+    aliases:
+      - deny

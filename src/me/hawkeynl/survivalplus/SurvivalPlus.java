@@ -10,16 +10,23 @@ import me.hawkeynl.survivalplus.Events.EventsClass;
 import me.hawkeynl.survivalplus.Events.NameTagsEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_16_R3.help.CommandAliasHelpTopic;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class SurvivalPlus extends JavaPlugin {
     public static final String PREFIX = ChatColor.BOLD + "" + ChatColor.YELLOW + "[SurvivalPlus] " + ChatColor.RESET;
     public static SurvivalPlus PLUGIN;
+
+    Map<String, String> currentTpaRequests = new HashMap<>();
 
     public static ArrayList<Enchantment> custom_enchants = new ArrayList<>();
     public static HasteEnchantment hasteEnchantment = new HasteEnchantment(101);
@@ -103,6 +110,116 @@ public class SurvivalPlus extends JavaPlugin {
         } catch (Exception ignored) { }
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + getDescription().getName() + " has stopped on " + ChatColor.BLUE + "v" + getDescription().getVersion() + ChatColor.RESET);
+    }
+
+    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
+        if(commandSender instanceof Player) {
+            Player player = (Player) commandSender;
+
+            if(command.getName().equalsIgnoreCase("tpa")) {
+                if(player != null) {
+                    if(currentTpaRequests.containsKey(player.getName())) {
+                        player.sendMessage(PREFIX + ChatColor.RED + "You already have a request running, please wait...");
+                        return false;
+                    }
+
+                    if(args.length >= 1) {
+                        final Player target = getServer().getPlayer(args[0]);
+
+                        if(target == null) {
+                            player.sendMessage(PREFIX + ChatColor.RED + "Not a valid player.");
+                            return false;
+                        }
+
+                        if(target == player) {
+                            player.sendMessage(PREFIX + ChatColor.RED + "You can not teleport to yourself.");
+                            return false;
+                        }
+
+                        sendRequest(player, target);
+
+                        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+                            @Override
+                            public void run() {
+                                killRequest(target.getName());
+                            }
+                        }, 500);
+                    } else {
+                        player.sendMessage(PREFIX + ChatColor.YELLOW + "/tpa <player>" + ChatColor.GRAY + " to send a teleport request.");
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            if(command.getName().equalsIgnoreCase("tpaccept")) {
+                if(player != null) {
+                    if(currentTpaRequests.containsKey(player.getName())) {
+                        Player target = getServer().getPlayer(currentTpaRequests.get(player.getName()));
+                        currentTpaRequests.remove(player.getName());
+
+                        if(target != null) {
+                            target.teleport(player);
+                            target.sendMessage(ChatColor.GRAY + "" + ChatColor.BOLD + "Teleporting to " + ChatColor.YELLOW + player.getDisplayName());
+                            return true;
+                        } else {
+                            player.sendMessage(PREFIX + ChatColor.RED + "Can not teleport to target, player might have gone offline.");
+                            return false;
+                        }
+                    } else {
+                        commandSender.sendMessage(PREFIX + ChatColor.RED + "You do not have any teleport requests.");
+                    }
+                }
+                return true;
+            }
+
+            if(command.getName().equalsIgnoreCase("tpdeny")) {
+                if(player != null) {
+                    if(currentTpaRequests.containsKey(player.getName())) {
+                        Player target = getServer().getPlayer(currentTpaRequests.get(player.getName()));
+                        currentTpaRequests.remove(player.getName());
+
+                        if(target != null) {
+                            target.sendMessage(PREFIX + ChatColor.YELLOW + player.getDisplayName() + ChatColor.RED + " rejected your teleport request.");
+                            player.sendMessage(PREFIX + ChatColor.YELLOW + target.getDisplayName() + ChatColor.GRAY + " was rejected.");
+                            return true;
+                        } else {
+                            commandSender.sendMessage(PREFIX + ChatColor.RED + "Can not deny teleport from player, player might have gone offline.");
+                            return false;
+                        }
+                    } else {
+                        commandSender.sendMessage(PREFIX + ChatColor.RED + "You do not have any teleport requests.");
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean killRequest(String key) {
+        if (currentTpaRequests.containsKey(key)) {
+            Player player = getServer().getPlayer(currentTpaRequests.get(key));
+            if (!(player == null)) {
+                player.sendMessage(PREFIX + ChatColor.RED + "Your teleport request timed out.");
+            }
+
+            currentTpaRequests.remove(key);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void sendRequest(Player sender, Player recipient) {
+        sender.sendMessage(PREFIX + ChatColor.GREEN + "Sent teleport request to " + ChatColor.YELLOW + recipient.getDisplayName());
+
+        recipient.sendMessage(PREFIX + ChatColor.YELLOW + sender.getDisplayName() + ChatColor.GRAY + " has sent a teleport request to you.");
+        recipient.sendMessage(PREFIX + ChatColor.YELLOW + "/tpaccept" + ChatColor.GRAY + " to accept the teleport request.");
+        recipient.sendMessage(PREFIX + ChatColor.YELLOW + "/tpadeny" + ChatColor.GRAY + "  to deny the teleport request.");
+
+        currentTpaRequests.put(recipient.getName(), sender.getName());
     }
 
     public static SurvivalPlus getPlugin() { return PLUGIN; }
