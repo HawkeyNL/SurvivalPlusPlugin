@@ -119,7 +119,7 @@ public class MultiBreakerEnchantment extends Enchantment implements Listener {
             }
             for (Block block : blocks) {
                 if (blocksNotToBreak.contains(block.getType())) {
-                    return;
+                    continue;
                 }
 
                 if (enchant == 0) {
