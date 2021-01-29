@@ -1,6 +1,7 @@
 package me.hawkeynl.survivalplus.Enchantments;
 
 import me.hawkeynl.survivalplus.SurvivalPlus;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -38,12 +39,12 @@ public class ExplosiveTouchEnchantment extends Enchantment implements Listener {
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
         LivingEntity shooter = (LivingEntity) entity.getShooter();
-        if (entity.hasMetadata("ExplosiveTouch")) {
+        if (entity.hasMetadata("ExplosiveTouch") && ((Player) shooter).getGameMode() != GameMode.CREATIVE) {
             Location loc = entity.getLocation();
             ((Player) shooter).setNoDamageTicks(10);
             entity.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), (float) 2.5, false, true);
-            entity.remove();
         }
+        entity.remove();
     }
 
     @Override
