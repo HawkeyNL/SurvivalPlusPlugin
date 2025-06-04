@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Homes {
     private static final FileConfiguration config = SurvivalPlus.getPlugin().getConfig();
 
-    public static void teleportToHomeLocation(Player player, String name) throws InterruptedException {
+    public static void teleportToHomeLocation(Player player, String name) {
         String uuid = player.getUniqueId().toString();
         String con = "Users." + uuid + ".Homes." + name.toLowerCase();
         String homeExists = config.getString(con);
@@ -28,13 +28,12 @@ public class Homes {
             double pitch = config.getDouble(con + ".PITCH");
 
             player.sendMessage(SurvivalPlus.PREFIX + ChatColor.GRAY + "Teleporting in " + ChatColor.YELLOW + 2);
-            Thread.sleep(1000);
-            player.sendMessage(SurvivalPlus.PREFIX + ChatColor.GRAY + "Teleporting in " + ChatColor.YELLOW + 1);
-            Thread.sleep(1000);
-
-            player.sendMessage(SurvivalPlus.PREFIX + ChatColor.GREEN + "Teleporting to " + ChatColor.YELLOW + name);
-            Thread.sleep(500);
-            player.teleport(new Location(w, x, y, z, (float)yaw, (float)pitch));
+            Bukkit.getScheduler().runTaskLater(SurvivalPlus.getPlugin(), () ->
+                    player.sendMessage(SurvivalPlus.PREFIX + ChatColor.GRAY + "Teleporting in " + ChatColor.YELLOW + 1), 20L);
+            Bukkit.getScheduler().runTaskLater(SurvivalPlus.getPlugin(), () -> {
+                player.sendMessage(SurvivalPlus.PREFIX + ChatColor.GREEN + "Teleporting to " + ChatColor.YELLOW + name);
+                player.teleport(new Location(w, x, y, z, (float) yaw, (float) pitch));
+            }, 40L);
         } else {
             player.sendMessage(SurvivalPlus.PREFIX + ChatColor.RED + "No home found with the name " + ChatColor.YELLOW + name);
         }
